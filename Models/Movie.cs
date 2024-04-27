@@ -1,5 +1,6 @@
 ﻿namespace Project_MVC_StaticSite_Cloud.Models
 {
+    //This is Movie model
     public class Movie
     {
         public int Id { get; set; }
