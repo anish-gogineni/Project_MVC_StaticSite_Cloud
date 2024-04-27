@@ -1,5 +1,6 @@
 ﻿namespace Project_MVC_StaticSite_Cloud.Models
 {
+  //This is tV_shows model
     public class TV_Shows
     {
         public int Id { get; set; }
