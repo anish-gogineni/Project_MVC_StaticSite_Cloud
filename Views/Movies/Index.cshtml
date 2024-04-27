@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies</title>
+</head>
+<body>
+    <section class="movie-list">
+        <h2>Bulls Movie Recommendations</h2>
+        <table id="movieTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Genre</th>
+                    <th>Rating</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Movie rows will be dynamically added here -->
+            </tbody>
+        </table>
+        <button onclick="addMovie()">Add Movie</button>
+    </section>
+
+    <section class="movie-list">
+        <h2>Bulls Movies by Genre</h2>
+        <canvas id="genreChart" width="400" height="200"></canvas>
+        <!-- Genre chart will be displayed here -->
+    </section>
+
+    <script>
+        // Sample initial movie data
+        let movies = [
+            {
+                id: 1,
+                title: "The Bullfather",
+                genre: "Drama",
+                rating: "8/10",
+                description: "A bull's rise to power in the underworld of cattle ranching."
+            },
+            {
+                id: 2,
+                title: "Bulls of the Caribbean",
+                genre: "Action",
+                rating: "6/10",
+                description: "A group of brave bulls sets sail on an epic adventure to find treasure."
+            },
+            {
+                id: 3,
+                title: "Bull Wars: The Force Awakens",
+                genre: "Sci-Fi",
+                rating: "7/10",
+                description: "The saga continues as bulls battle for the fate of the galaxy."
+            },
+            {
+                id: 4,
+                title: "Bull Fiction",
+                genre: "Crime",
+                rating: "9/10",
+                description: "A tale of crime and redemption, featuring a cast of bull characters."
+            },
+            {
+                id: 5,
+                title: "Bull Runner",
+                genre: "Thriller",
+                rating: "7/10",
+                description: "A bull must outrun the law to clear his name and prove his innocence."
+            }
+        ];
+
+        // Function to render movies
+        function renderMovies() {
+            const tableBody = document.querySelector("#movieTable tbody");
+            tableBody.innerHTML = "";
+            movies.forEach((movie, index) => {
+                const row = `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${movie.title}</td>
+                                <td>${movie.genre}</td>
+                                <td>${movie.rating}</td>
+                                <td>${movie.description}</td>
+                                <td>
+                                    <button onclick="editMovie(${movie.id})">Edit</button>
+                                    <button onclick="deleteMovie(${movie.id})">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        // Function to add a new movie
+        function addMovie() {
+            const newMovie = {
+                id: movies.length + 1,
+                title: prompt("Enter movie title:"),
+                genre: prompt("Enter movie genre:"),
+                rating: prompt("Enter movie rating:"),
+                description: prompt("Enter movie description:")
+            };
+            movies.push(newMovie);
+            renderMovies();
+        }
+
+        // Function to edit a movie
+        function editMovie(movieId) {
+            const index = movies.findIndex(movie => movie.id === movieId);
+            if (index !== -1) {
+                const updatedMovie = {
+                    id: movieId,
+                    title: prompt("Enter new movie title:", movies[index].title),
+                    genre: prompt("Enter new movie genre:", movies[index].genre),
+                    rating: prompt("Enter new movie rating:", movies[index].rating),
+                    description: prompt("Enter new movie description:", movies[index].description)
+                };
+                movies[index] = updatedMovie;
+                renderMovies();
+            } else {
+                alert("Movie not found!");
+            }
+        }
+
+        // Function to delete a movie
+        function deleteMovie(movieId) {
+            const index = movies.findIndex(movie => movie.id === movieId);
+            if (index !== -1) {
+                movies.splice(index, 1);
+                renderMovies();
+            } else {
+                alert("Movie not found!");
+            }
+        }
+
+        // Initial rendering of movies
+        renderMovies();
+    </script>
+</body>
+</html>

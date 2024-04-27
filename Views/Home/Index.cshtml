@@ -1,8 +1,41 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<style>
+    body {
+        background-image: url('img/bkg.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        color: white; /* Change text color to white */
+        font-size: 18px; /* Enlarge text size */
+        /* Additional styles for body if needed */
+        /* font-family: Arial, sans-serif; */
+        /* Additional styles for other elements if needed */
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    footer {
+        margin-top: auto; /* Footer sticks to the bottom */
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        color: white;
+        text-align: center;
+        padding: 20px;
+    }
+</style>
+
+<section class="hero">
+    <h2>Your Guide to Bull-tastic Entertainment</h2>
+    <p>Discover the best movies, TV shows, and documentaries recommended by Bulls!</p>
+</section>
+<section class="features">
+    <h2>Features</h2>
+    <ul>
+        <li>Curated recommendations</li>
+        <li>Bull-themed ratings</li>
+        <li>User-friendly interface</li>
+    </ul>
+</section>

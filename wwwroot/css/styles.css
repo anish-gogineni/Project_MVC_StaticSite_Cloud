@@ -1,0 +1,205 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+}
+
+header {
+    background-color: #435d4e; /* Green theme */
+
+    color: #f1f5f1;
+    text-align: center; /* Align header to center */
+
+    padding: 20px;
+}
+
+    header h1 {
+        margin: 0;
+    }
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+    nav ul li {
+        display: inline;
+        margin-right: 20px;
+    }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+main {
+    padding: 20px;
+}
+
+.movie-list {
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    table th, table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    table th {
+        background-color: #f2f2f2;
+    }
+
+footer {
+    background-color: #435d4e; /* Green theme */
+
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    position: fixed; /* Set footer position to fixed */
+
+    bottom: 0; /* Stick the footer to the bottom */
+
+    width: 100%; /* Set the width of the footer to 100% */
+}
+
+.team {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.member {
+    max-width: 300px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    text-align: center;
+}
+
+    .member img {
+        width: 100%;
+        border-radius: 50%;
+        margin-bottom: 15px;
+    }
+
+    .member h3 {
+        margin: 0;
+        font-size: 20px;
+        color: #333;
+    }
+
+    .member p {
+        color: #666;
+    }
+
+    .member img {
+        width: 200px; /* Set a fixed width */
+
+        height: 200px; /* Set a fixed height */
+
+        object-fit: cover; /* Maintain aspect ratio and cover the entire space */
+
+        border-radius: 50%; /* Make the image round */
+
+        margin-bottom: 15px;
+    }
+
+/* The Modal (background) */
+
+.modal {
+    display: none; /* Hidden by default */
+
+    position: fixed; /* Stay in place */
+
+    z-index: 1; /* Sit on top */
+
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+
+    height: 100%; /* Full height */
+
+    overflow: auto; /* Enable scroll if needed */
+
+    background-color: rgb(0,0,0); /* Fallback color */
+
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.login-container {
+    width: 300px;
+    margin-top: 20px; /* Adjust top margin as needed */
+
+    padding: 20px;
+    background-color: #f1f5f1;
+    box-shadow: 0 0 10px #ccc;
+    color: #435d4e;
+    border-radius: 10px;
+    position: absolute; /* Use absolute positioning within flex container */
+
+    right: 10%; /* Adjust to move more or less to the right */
+
+    top: 20%; /* Adjust to move more or less to the top */
+}
+
+    .login-container input[type="text"],
+    .login-container input[type="password"],
+    .login-container button {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .login-container button {
+        background-color: #435d4e;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+        .login-container button:hover {
+            background-color: #36703d;
+        }
+
+    .login-container label {
+        display: block;
+        margin-bottom: 20px;
+    }
+
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
