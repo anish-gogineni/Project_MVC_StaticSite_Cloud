@@ -3,12 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies</title>
+    <title>Documentaries</title>
+    <style>
+        /* Styles for the modal */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+        /* Modal close button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+    </style>
 </head>
 <body>
-    <section class="movie-list">
-        <h2>Bulls Movie Recommendations</h2>
-        <table id="movieTable">
+    <!-- Add Documentary Modal -->
+    <div id="addDocumentaryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addDocumentaryModal')">&times;</span>
+            <h2>Add Documentary</h2>
+            <input type="text" id="title" placeholder="Title"><br>
+            <input type="text" id="genre" placeholder="Genre"><br>
+            <input type="text" id="rating" placeholder="Rating"><br>
+            <textarea id="description" placeholder="Description"></textarea><br>
+            <button onclick="saveDocumentary()">Save</button>
+        </div>
+    </div>
+
+    <!-- Edit Documentary Modal -->
+    <div id="editDocumentaryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editDocumentaryModal')">&times;</span>
+            <h2>Edit Documentary</h2>
+            <input type="text" id="editTitle" placeholder="Title"><br>
+            <input type="text" id="editGenre" placeholder="Genre"><br>
+            <input type="text" id="editRating" placeholder="Rating"><br>
+            <textarea id="editDescription" placeholder="Description"></textarea><br>
+            <button onclick="updateDocumentary()">Update</button>
+        </div>
+    </div>
+
+    <section class="documentary-list">
+        <h2>Documentary Recommendations</h2>
+        <table id="documentaryTable">
             <thead>
                 <tr>
                     <th>#</th>
@@ -20,21 +82,24 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Movie rows will be dynamically added here -->
+                <!-- Documentary rows will be dynamically added here -->
             </tbody>
         </table>
-        <button onclick="addMovie()">Add Movie</button>
+        <button onclick="openModal('addDocumentaryModal')">Add Documentary</button>
     </section>
 
-    <section class="movie-list">
-        <h2>Bulls Movies by Genre</h2>
-        <canvas id="genreChart" width="400" height="200"></canvas>
+    <section class="documentary-list">
+        <h2>Documentaries by Genre</h2>
+        <canvas id="documentaryGenreChart" width="400" height="200"></canvas>
         <!-- Genre chart will be displayed here -->
     </section>
 
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
-        // Sample initial movie data
-        let movies = [
+        // Sample initial documentary data
+        let documentaries = [
             {
                 id: 1,
                 title: "Bulls in the Wild",
@@ -59,7 +124,7 @@
                 title: "The Secret Life of Bulls",
                 genre: "Documentary",
                 rating: "6/10",
-                description: "	Revealing the hidden world of bulls and their social dynamics."
+                description: "Revealing the hidden world of bulls and their social dynamics."
             }, {
                 id: 5,
                 title: "Bulls: Legends of the Past",
@@ -69,72 +134,129 @@
             }
         ];
 
-        // Function to render movies
-        function renderMovies() {
-            const tableBody = document.querySelector("#movieTable tbody");
+        // Function to render documentaries
+        function renderDocumentaries() {
+            const tableBody = document.querySelector("#documentaryTable tbody");
             tableBody.innerHTML = "";
-            movies.forEach((movie, index) => {
+            documentaries.forEach((documentary, index) => {
                 const row = `
                                             <tr>
                                                 <td>${index + 1}</td>
-                                                <td>${movie.title}</td>
-                                                <td>${movie.genre}</td>
-                                                <td>${movie.rating}</td>
-                                                <td>${movie.description}</td>
+                                                <td>${documentary.title}</td>
+                                                <td>${documentary.genre}</td>
+                                                <td>${documentary.rating}</td>
+                                                <td>${documentary.description}</td>
                                                 <td>
-                                                    <button onclick="editMovie(${movie.id})">Edit</button>
-                                                    <button onclick="deleteMovie(${movie.id})">Delete</button>
+                                                    <button onclick="openEditModal(${documentary.id})">Edit</button>
+                                                    <button onclick="deleteDocumentary(${documentary.id})">Delete</button>
                                                 </td>
                                             </tr>
                                         `;
                 tableBody.innerHTML += row;
             });
+            updateDocumentaryGenreChart(); // Update genre chart after rendering documentaries
         }
 
-        // Function to add a new movie
-        function addMovie() {
-            const newMovie = {
-                id: movies.length + 1,
-                title: prompt("Enter movie title:"),
-                genre: prompt("Enter movie genre:"),
-                rating: prompt("Enter movie rating:"),
-                description: prompt("Enter movie description:")
+        // Function to open modal
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = "block";
+        }
+
+        // Function to close modal
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = "none";
+        }
+
+        // Function to open edit modal with pre-filled data
+        function openEditModal(documentaryId) {
+            const documentary = documentaries.find(d => d.id === documentaryId);
+            document.getElementById('editTitle').value = documentary.title;
+            document.getElementById('editGenre').value = documentary.genre;
+            document.getElementById('editRating').value = documentary.rating;
+            document.getElementById('editDescription').value = documentary.description;
+            openModal('editDocumentaryModal');
+        }
+
+        // Function to add a new documentary
+        function saveDocumentary() {
+            const newDocumentary = {
+                id: documentaries.length + 1,
+                title: document.getElementById('title').value,
+                genre: document.getElementById('genre').value,
+                rating: document.getElementById('rating').value,
+                description: document.getElementById('description').value
             };
-            movies.push(newMovie);
-            renderMovies();
+            documentaries.push(newDocumentary);
+            closeModal('addDocumentaryModal');
+            renderDocumentaries();
         }
 
-        // Function to edit a movie
-        function editMovie(movieId) {
-            const index = movies.findIndex(movie => movie.id === movieId);
-            if (index !== -1) {
-                const updatedMovie = {
-                    id: movieId,
-                    title: prompt("Enter new movie title:", movies[index].title),
-                    genre: prompt("Enter new movie genre:", movies[index].genre),
-                    rating: prompt("Enter new movie rating:", movies[index].rating),
-                    description: prompt("Enter new movie description:", movies[index].description)
-                };
-                movies[index] = updatedMovie;
-                renderMovies();
+        // Function to update a documentary
+        function updateDocumentary() {
+            const title = document.getElementById('editTitle').value;
+            const genre = document.getElementById('editGenre').value;
+            const rating = document.getElementById('editRating').value;
+            const description = document.getElementById('editDescription').value;
+
+            const documentaryId = documentaries.findIndex(documentary => documentary.title === title);
+            if (documentaryId !== -1) {
+                documentaries[documentaryId].genre = genre;
+                documentaries[documentaryId].rating = rating;
+                documentaries[documentaryId].description = description;
+                closeModal('editDocumentaryModal');
+                renderDocumentaries();
             } else {
-                alert("Movie not found!");
+                alert("Documentary not found!");
             }
         }
 
-        // Function to delete a movie
-        function deleteMovie(movieId) {
-            const index = movies.findIndex(movie => movie.id === movieId);
+        // Function to delete a documentary
+        function deleteDocumentary(documentaryId) {
+            const index = documentaries.findIndex(documentary => documentary.id === documentaryId);
             if (index !== -1) {
-                movies.splice(index, 1);
-                renderMovies();
+                documentaries.splice(index, 1);
+                renderDocumentaries();
             } else {
-                alert("Movie not found!");
+                alert("Documentary not found!");
             }
         }
 
-        // Initial rendering of movies
-        renderMovies();
+        // Function to update the genre chart for documentaries
+        function updateDocumentaryGenreChart() {
+            const genres = {};
+            documentaries.forEach(documentary => {
+                genres[documentary.genre] = genres[documentary.genre] ? genres[documentary.genre] + 1 : 1;
+            });
+
+            const ctx = document.getElementById('documentaryGenreChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(genres),
+                    datasets: [{
+                        label: 'Number of Documentaries',
+                        data: Object.values(genres),
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+
+        // Initial rendering of documentaries
+        renderDocumentaries();
     </script>
 </body>
 </html>

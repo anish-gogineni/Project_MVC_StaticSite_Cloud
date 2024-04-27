@@ -4,8 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movies</title>
+    <style>
+        /* Styles for the modal and other elements */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+    </style>
 </head>
 <body>
+    <!-- Add Movie Modal -->
+    <div id="addMovieModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addMovieModal')">&times;</span>
+            <h2>Add Movie</h2>
+            <input type="text" id="title" placeholder="Title"><br>
+            <input type="text" id="genre" placeholder="Genre"><br>
+            <input type="text" id="rating" placeholder="Rating"><br>
+            <textarea id="description" placeholder="Description"></textarea><br>
+            <button onclick="saveMovie()">Save</button>
+        </div>
+    </div>
+
+    <!-- Edit Movie Modal -->
+    <div id="editMovieModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editMovieModal')">&times;</span>
+            <h2>Edit Movie</h2>
+            <input type="text" id="editTitle" placeholder="Title"><br>
+            <input type="text" id="editGenre" placeholder="Genre"><br>
+            <input type="text" id="editRating" placeholder="Rating"><br>
+            <textarea id="editDescription" placeholder="Description"></textarea><br>
+            <button onclick="updateMovie()">Update</button>
+        </div>
+    </div>
+
     <section class="movie-list">
         <h2>Bulls Movie Recommendations</h2>
         <table id="movieTable">
@@ -23,7 +85,7 @@
                 <!-- Movie rows will be dynamically added here -->
             </tbody>
         </table>
-        <button onclick="addMovie()">Add Movie</button>
+        <button onclick="openModal('addMovieModal')">Add Movie</button>
     </section>
 
     <section class="movie-list">
@@ -32,8 +94,8 @@
         <!-- Genre chart will be displayed here -->
     </section>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
     <script>
-        // Sample initial movie data
         let movies = [
             {
                 id: 1,
@@ -72,7 +134,6 @@
             }
         ];
 
-        // Function to render movies
         function renderMovies() {
             const tableBody = document.querySelector("#movieTable tbody");
             tableBody.innerHTML = "";
@@ -85,47 +146,66 @@
                                 <td>${movie.rating}</td>
                                 <td>${movie.description}</td>
                                 <td>
-                                    <button onclick="editMovie(${movie.id})">Edit</button>
+                                    <button onclick="openEditModal(${movie.id})">Edit</button>
                                     <button onclick="deleteMovie(${movie.id})">Delete</button>
                                 </td>
                             </tr>
                         `;
                 tableBody.innerHTML += row;
             });
+            updateGenreChart(); // Update genre chart after rendering movies
         }
 
-        // Function to add a new movie
-        function addMovie() {
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = "none";
+        }
+
+        function openEditModal(movieId) {
+            const movie = movies.find(m => m.id === movieId);
+            document.getElementById('editTitle').value = movie.title;
+            document.getElementById('editGenre').value = movie.genre;
+            document.getElementById('editRating').value = movie.rating;
+            document.getElementById('editDescription').value = movie.description;
+            openModal('editMovieModal');
+        }
+
+        function saveMovie() {
             const newMovie = {
                 id: movies.length + 1,
-                title: prompt("Enter movie title:"),
-                genre: prompt("Enter movie genre:"),
-                rating: prompt("Enter movie rating:"),
-                description: prompt("Enter movie description:")
+                title: document.getElementById('title').value,
+                genre: document.getElementById('genre').value,
+                rating: document.getElementById('rating').value,
+                description: document.getElementById('description').value
             };
             movies.push(newMovie);
+            closeModal('addMovieModal');
             renderMovies();
         }
 
-        // Function to edit a movie
-        function editMovie(movieId) {
-            const index = movies.findIndex(movie => movie.id === movieId);
-            if (index !== -1) {
-                const updatedMovie = {
-                    id: movieId,
-                    title: prompt("Enter new movie title:", movies[index].title),
-                    genre: prompt("Enter new movie genre:", movies[index].genre),
-                    rating: prompt("Enter new movie rating:", movies[index].rating),
-                    description: prompt("Enter new movie description:", movies[index].description)
-                };
-                movies[index] = updatedMovie;
+        function updateMovie() {
+            const title = document.getElementById('editTitle').value;
+            const genre = document.getElementById('editGenre').value;
+            const rating = document.getElementById('editRating').value;
+            const description = document.getElementById('editDescription').value;
+
+            const movieId = movies.findIndex(movie => movie.title === title);
+            if (movieId !== -1) {
+                movies[movieId].genre = genre;
+                movies[movieId].rating = rating;
+                movies[movieId].description = description;
+                closeModal('editMovieModal');
                 renderMovies();
             } else {
                 alert("Movie not found!");
             }
         }
 
-        // Function to delete a movie
         function deleteMovie(movieId) {
             const index = movies.findIndex(movie => movie.id === movieId);
             if (index !== -1) {
@@ -136,7 +216,37 @@
             }
         }
 
-        // Initial rendering of movies
+        function updateGenreChart() {
+            const genres = {};
+            movies.forEach(movie => {
+                genres[movie.genre] = genres[movie.genre] ? genres[movie.genre] + 1 : 1;
+            });
+
+            const ctx = document.getElementById('genreChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(genres),
+                    datasets: [{
+                        label: 'Number of Movies',
+                        data: Object.values(genres),
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+
         renderMovies();
     </script>
 </body>

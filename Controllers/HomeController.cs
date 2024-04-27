@@ -18,7 +18,7 @@ namespace Project_MVC_StaticSite_Cloud.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult About()
         {
             return View();
         }
